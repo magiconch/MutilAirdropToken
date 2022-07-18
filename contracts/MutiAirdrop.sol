@@ -25,6 +25,21 @@ contract MultAirdrop is AccessControl {
         return IERC20(_token).balanceOf(msg.sender);
     }
 
+    function containsToken(address _token) public view returns (bool) {
+        for (uint256 index = 0; index < tokens.length; index++) {
+            if (tokens[index] == _token) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function addToken(address _token) external onlyRole(DAO_ADMIN) {
+        require(_token != address(0), "Token address should not be 0");
+        require(!containsToken(_token), "Token already added");
+        tokens.push(_token);
+    }
+
     function getSum(uint256[] calldata _arr) public pure returns (uint sum) {
         for (uint i = 0; i < _arr.length; i++) sum = sum + _arr[i];
     }
