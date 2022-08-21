@@ -16,7 +16,7 @@ contract MultAirdrop is AccessControl {
     bytes32 public constant DAO_AGENT = keccak256("DAO-AGENT");
 
     constructor() {
-        _setRoleAdmin(DAO_ADMIN, DAO_AGENT);
+        _setRoleAdmin(DAO_AGENT,DAO_ADMIN);
         _setRoleAdmin(DAO_ADMIN, DAO_ADMIN);
         _setupRole(DAO_ADMIN, _msgSender());
     }
@@ -146,7 +146,8 @@ contract MultAirdrop is AccessControl {
     |__________________________________*/
 
     function withdraw() external onlyRole(DAO_ADMIN) {
-        payable(_msgSender()).transfer(address(this).balance);
+        (bool success, ) = msg.sender.call{value: address(this).balance}("");
+        require(success, "fail");
     }
 
     function withdrawToken(address _token) external onlyRole(DAO_ADMIN) {
